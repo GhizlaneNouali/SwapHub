@@ -1,0 +1,206 @@
+<div class="min-h-screen bg-gradient-to-br from-base-200 to-base-100 flex items-center justify-center px-4 py-12">
+  <div class="max-w-md w-full space-y-8">
+    <div class="text-center">
+      <h2 class="mt-1 text-3xl font-extrabold text-base-content">Create an account</h2>
+      <p class="mt-2 text-base-content/70">Join SwapHub and start exchanging items</p>
+    </div>
+    <!-- Títol i descripció del formulari -->
+    <div class="card bg-base-100 shadow-xl border border-base-300">
+      <div class="card-body p-6 sm:p-8">
+        <div *ngIf="successMessage" class="alert alert-success mb-6 shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{{ successMessage }}</span>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-error mb-6 shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+        <!-- Formulari de registre amb validacions -->
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
+          <!-- Input per al nom -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">First Name</span>
+            </label>
+            <input 
+              type="text" 
+              formControlName="name" 
+              class="input input-bordered w-full focus:input-primary" 
+              placeholder="John"
+              [ngClass]="{'input-error': registerForm.get('name')?.invalid && registerForm.get('name')?.touched}"
+            />
+            <label *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched" class="label">
+              <span class="label-text-alt text-error">
+                <ng-container *ngIf="registerForm.get('name')?.errors?.['required']">First name is required</ng-container>
+                <ng-container *ngIf="registerForm.get('name')?.errors?.['minlength']">First name must be at least 3 characters</ng-container>
+                <ng-container *ngIf="registerForm.get('name')?.errors?.['pattern']">First name must contain only letters</ng-container>
+              </span>
+            </label>
+          </div>
+          <!-- Input per al cognom -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Last Name</span>
+            </label>
+            <input 
+              type="text" 
+              formControlName="surnames" 
+              class="input input-bordered w-full focus:input-primary" 
+              placeholder="Doe"
+              [ngClass]="{'input-error': registerForm.get('surnames')?.invalid && registerForm.get('surnames')?.touched}"
+            />
+            <label *ngIf="registerForm.get('surnames')?.invalid && registerForm.get('surnames')?.touched" class="label">
+              <span class="label-text-alt text-error">
+                <ng-container *ngIf="registerForm.get('surnames')?.errors?.['required']">Last name is required</ng-container>
+                <ng-container *ngIf="registerForm.get('surnames')?.errors?.['minlength']">Last name must be at least 3 characters</ng-container>
+                <ng-container *ngIf="registerForm.get('surnames')?.errors?.['pattern']">Last name must contain only letters</ng-container>
+              </span>
+            </label>
+          </div>
+          <!-- Input per l'email -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Email</span>
+            </label>
+            <input 
+              type="email" 
+              formControlName="email" 
+              class="input input-bordered w-full focus:input-primary" 
+              placeholder="your.email@example.com"
+              [ngClass]="{'input-error': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}"
+            />
+            <label *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="label">
+              <span class="label-text-alt text-error">
+                <ng-container *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</ng-container>
+                <ng-container *ngIf="registerForm.get('email')?.errors?.['email']">Please enter a valid email</ng-container>
+              </span>
+            </label>
+          </div>
+          <!-- Input per la contrasenya -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Password</span>
+            </label>
+            <div class="relative ">
+              <input 
+                [type]="showPassword ? 'text' : 'password'" 
+                formControlName="password" 
+                class="input input-bordered w-full pr-10 focus:input-primary " 
+                placeholder="••••••••"
+                [ngClass]="{'input-error': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}"
+              />
+              <button 
+                type="button" 
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/50 hover:text-primary"
+                (click)="showPassword = !showPassword"
+              >
+                <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                </svg>
+              </button>
+            </div>
+            <label *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="label">
+              <div class="label-text-alt text-error break-words whitespace-normal w-full space-y-1">
+                <div *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</div>
+                <div *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 8 characters</div>
+                <div *ngIf="registerForm.get('password')?.errors?.['pattern']">Password must include uppercase, lowercase, number and symbol</div>
+              </div>
+            </label>
+            <div *ngIf="registerForm.get('password')?.value" class="mt-2">
+              <div class="text-xs text-base-content/70 mb-1">Password strength:</div>
+              <div class="flex gap-1">
+                <div class="h-1 flex-1 rounded-full" 
+                  [ngClass]="{
+                    'bg-error': registerForm.get('password')?.value.length < 8,
+                    'bg-warning': registerForm.get('password')?.value.length >= 8 && registerForm.get('password')?.invalid,
+                    'bg-success': registerForm.get('password')?.valid
+                  }"></div>
+                <div class="h-1 flex-1 rounded-full" 
+                  [ngClass]="{
+                    'bg-base-300': registerForm.get('password')?.value.length < 8,
+                    'bg-warning': registerForm.get('password')?.value.length >= 8 && registerForm.get('password')?.invalid,
+                    'bg-success': registerForm.get('password')?.valid
+                  }"></div>
+                <div class="h-1 flex-1 rounded-full" 
+                  [ngClass]="{
+                    'bg-base-300': registerForm.get('password')?.invalid,
+                    'bg-success': registerForm.get('password')?.valid
+                  }"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Input per la confirmació de la contrasenya -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Confirm Password</span>
+            </label>
+            <div class="relative">
+              <input 
+                [type]="showConfirmPassword ? 'text' : 'password'" 
+                formControlName="confirmPassword" 
+                class="input input-bordered w-full pr-10 focus:input-primary" 
+                placeholder="••••••••"
+                [ngClass]="{'input-error': (registerForm.get('confirmPassword')?.invalid || registerForm.hasError('mismatch')) && registerForm.get('confirmPassword')?.touched}"
+              />
+              <button 
+                type="button" 
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/50 hover:text-primary"
+                (click)="showConfirmPassword = !showConfirmPassword"
+              >
+                <svg *ngIf="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <svg *ngIf="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                </svg>
+              </button>
+            </div>
+            <label *ngIf="(registerForm.get('confirmPassword')?.invalid || registerForm.hasError('mismatch')) && registerForm.get('confirmPassword')?.touched" class="label">
+              <span class="label-text-alt text-error">
+                <ng-container *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</ng-container>
+                <ng-container *ngIf="registerForm.hasError('mismatch')">Passwords do not match</ng-container>
+              </span>
+            </label>
+          </div>
+
+          <div class="form-control mt-8">
+            <button 
+              type="submit" 
+              class="btn btn-primary w-full btn-interactive" 
+              [disabled]="registerForm.invalid || loading"
+              [class.loading]="loading"
+              style="--btn-focus-scale: 0.98;"
+            >
+              <ng-container *ngIf="!loading">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                Create Account
+              </ng-container>
+              <ng-container *ngIf="loading">
+                Creating account...
+              </ng-container>
+            </button>
+          </div>
+        </form>
+
+        <div class="text-center mt-6">
+          <p class="text-base-content/70">
+            Already have an account?
+            <a routerLink="/login" class="text-primary font-medium hover:underline">Sign in</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

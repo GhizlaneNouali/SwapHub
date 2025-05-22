@@ -1,0 +1,103 @@
+<ng-container [ngSwitch]="viewType">
+   <!-- Vista tipus quadrícula (grid) -->
+   <div *ngSwitchCase="'grid'" 
+       class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden cursor-pointer transform hover:-translate-y-1 h-full border border-base-200" 
+       (click)="onCardClick()">
+    
+     <!-- Imatge principal de l'element (si existeix) -->
+     <figure class="relative overflow-hidden h-52">
+      <img 
+        *ngIf="item.images && item.images.length > 0" 
+        [src]="apiUrl + item.images[0]?.path" 
+        class="h-full w-full object-cover transition-transform duration-500 hover:scale-110" 
+        alt="{{ item.title }}" />
+      
+       <!-- Si no hi ha imatge disponible, es mostra una icona i text indicatiu -->
+       <div 
+        *ngIf="!item.images || item.images.length === 0" 
+        class="h-full w-full bg-gradient-to-br from-base-200 to-base-300 flex flex-col items-center justify-center p-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/30 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span class="text-base-content/50 text-sm text-center">No image available</span>
+      </div>
+    
+       <!-- Si l'element té categoria, es mostra a la cantonada superior dreta -->
+       <div *ngIf="item.category" class="absolute top-3 right-3">
+        <span class="badge badge-primary shadow-md font-medium">{{ item.category }}</span>
+      </div>
+    </figure>
+    
+     <!-- Cos de l'element, amb títol i descripció -->
+     <div class="card-body p-5">
+      <h2 class="card-title text-lg font-bold mb-2 line-clamp-2 break-words">{{ item.title }}</h2>
+      <p class="text-sm text-base-content/70 line-clamp-2 break-words mb-4">{{ item.description || 'No description available' }}</p>
+      
+       <!-- Secció inferior amb informació sobre l'owner (propietari) -->
+       <div class="mt-auto pt-2 border-t border-base-200">
+        <div class="flex items-center gap-2">
+          <div class="avatar">
+            <div class="w-8 h-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1 overflow-hidden">
+              <img *ngIf="item.owner?.profileImage" [src]="apiUrl + item.owner.profileImage" alt="Profile" />
+            </div>
+          </div>          
+          <div class="flex flex-col">
+            <span class="text-xs font-medium">{{ item.owner?.name}}</span>
+            <span class="text-xs opacity-60">Owner</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- Vista tipus llista -->
+   <div 
+    *ngSwitchCase="'list'" 
+    class="card card-side bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden cursor-pointer mb-4 border border-base-200 transform hover:-translate-y-1"
+    (click)="onCardClick()">
+     <!-- Imatge de l'element per a la vista llista -->
+     <figure class="w-40 h-auto max-h-44 min-h-44 relative flex-shrink-0 overflow-hidden">
+      <img 
+        *ngIf="item.images && item.images.length > 0" 
+        [src]="apiUrl + item.images[0]?.path" 
+        alt="{{ item.title }}" 
+        class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"/>
+       <!-- Si no hi ha imatge disponible, es mostra una icona i text indicatiu -->
+       <div 
+        *ngIf="!item.images || item.images.length === 0" 
+        class="w-full h-full bg-gradient-to-br from-base-200 to-base-300 flex flex-col items-center justify-center p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-base-content/30 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span class="text-base-content/50 text-xs text-center">No image</span>
+      </div>
+       <!-- Si l'element té categoria, es mostra a la cantonada superior esquerra -->
+       <div *ngIf="item.category" class="absolute top-2 left-2">
+        <span class="badge badge-sm badge-primary shadow-sm font-medium">{{ item.category }}</span>
+      </div>
+    </figure>
+     <!-- Cos de l'element amb títol i descripció per a la vista llista -->
+     <div class="card-body px-5 py-4 w-full">
+      <div class="flex flex-col h-full justify-between">
+        <div>
+          <h2 class="card-title text-base font-bold line-clamp-1 break-words">{{ item.title }}</h2>
+          <p class="text-sm text-base-content/70 line-clamp-2 break-words mt-1">{{ item.description || 'No description available' }}</p>
+        </div>
+         <!-- Secció inferior amb informació sobre l'owner (propietari) -->
+         <div class="flex justify-between items-center mt-3 pt-2 border-t border-base-200">
+          <div class="flex items-center gap-2">
+            <div class="avatar">
+              <div class="w-7 h-7 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1 overflow-hidden">
+                <img *ngIf="item.owner?.profileImage" [src]="apiUrl + item.owner.profileImage" alt="Profile" />
+              </div>
+            </div>      
+            <div class="flex flex-col">
+              <span class="text-xs font-medium">{{ item.owner?.name || 'Unknown' }}</span>
+              <span class="text-xs opacity-60">Owner</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

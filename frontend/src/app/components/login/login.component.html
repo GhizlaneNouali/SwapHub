@@ -1,0 +1,109 @@
+<div class="min-h-screen bg-gradient-to-br from-base-200 to-base-100 flex items-center justify-center px-4 py-12">
+  <div class="max-w-md w-full space-y-8">
+    <!-- Títol i missatge d'introducció -->
+    <div class="text-center">
+      <h2 class="mt-4 text-3xl font-extrabold text-base-content">Welcome back</h2>
+      <p class="mt-2 text-base-content/70">Sign in to your SwapHub account</p>
+    </div>
+    <!-- Card per al formulari d'inici de sessió -->
+     <div class="card bg-base-100 shadow-xl border border-base-300">
+      <div class="card-body p-6 sm:p-8">
+         <div *ngIf="successMessage" class="alert alert-success mb-6 shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{{ successMessage }}</span>
+        </div>
+
+        <div *ngIf="message" class="alert alert-error mb-6 shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{{ message }}</span>
+        </div>
+        <!-- Formulari de login --> 
+         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+           <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Email</span>
+            </label>
+            <input 
+              type="email" 
+              formControlName="email" 
+              class="input input-bordered w-full focus:input-primary" 
+              placeholder="your.email@example.com"
+              [ngClass]="{'input-error': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}"
+            />
+            <label *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="label">
+              <span class="label-text-alt text-error">
+                <ng-container *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</ng-container>
+                <ng-container *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email</ng-container>
+              </span>
+            </label>
+          </div>
+          <!-- Camp de contrasenya -->
+           <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Password</span>
+            </label>
+            <div class="relative">
+              <input 
+                [type]="showPassword ? 'text' : 'password'" 
+                formControlName="password" 
+                class="input input-bordered w-full pr-10 focus:input-primary" 
+                placeholder="••••••••"
+                [ngClass]="{'input-error': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
+              />
+              <!-- Botó per mostrar/ocultar la contrasenya -->
+              <button 
+                type="button" 
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/50 hover:text-primary"
+                (click)="showPassword = !showPassword"
+              >
+                <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                </svg>
+              </button>
+            </div>
+            <!-- Missatge d'error per a la contrasenya -->
+            <label *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="label">
+              <span class="label-text-alt text-error">
+                <ng-container *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</ng-container>
+                <ng-container *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</ng-container>
+              </span>
+            </label>
+          </div>
+          <!-- Botó d'inici de sessió -->
+          <div class="form-control mt-8">
+          <button 
+            type="submit" 
+            class="btn btn-primary w-full btn-interactive" 
+            [disabled]="loginForm.invalid || loading"
+            [class.loading]="loading"
+          >
+            <ng-container *ngIf="!loading">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+              Sign in
+            </ng-container>
+            <ng-container *ngIf="loading">
+              Signing in...
+            </ng-container>
+          </button>
+        </div>
+      </form>
+        <!-- Enllaç per al registre -->
+         <div class="text-center mt-6">
+          <p class="text-base-content/70">
+            Don't have an account?
+            <a routerLink="/register" class="text-primary font-medium hover:underline">Sign up</a>
+          </p>
+        </div>
+      </div>
+    </div>
+</div>

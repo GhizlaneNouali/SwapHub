@@ -1,0 +1,49 @@
+ .card {
+    backface-visibility: hidden;
+  }
+  
+   figure img {
+    transition: transform 0.5s ease;
+  }
+  
+  .card:hover figure img {
+    transform: scale(1.05);
+  }
+  
+   figure div.bg-gradient-to-br {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  figure div.bg-gradient-to-br::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: pulse 4s linear infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+  }
+  
+   .avatar div[class*="bg-primary"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  

@@ -1,0 +1,127 @@
+<nav class="navbar bg-base-100 fixed top-0 z-50 shadow-lg px-4 sm:px-6 lg:px-12 w-full">
+  <div class="navbar-start">
+    <!-- Menú desplegable per a dispositius petits (pantalles mòbils) -->
+    <!-- <div class="dropdown" *ngIf="isAuthenticated"> -->
+      <div class="dropdown">
+      <label tabindex="0" class="btn btn-ghost lg:hidden">
+        <!-- Icona per a menús desplegables en dispositius petits -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8M4 18h16" />
+        </svg>
+      </label>
+      <!-- Contingut del menú desplegable -->
+<ul #dropdownMenu tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-lg bg-base-100 rounded-box w-64">
+  <li>
+    <a routerLink="/app" routerLinkActive="active" class="flex items-center gap-2" (click)="closeDropdown(dropdownMenu)">
+      <!-- icono -->
+      Home
+    </a>
+  </li>
+  <li>
+    <a routerLink="/app/new-object" routerLinkActive="active" class="flex items-center gap-2" (click)="closeDropdown(dropdownMenu)">
+      Add Item
+    </a>
+  </li>
+  <li>
+    <a routerLink="/app/my-exchanges" routerLinkActive="active" class="flex items-center gap-2" (click)="closeDropdown(dropdownMenu)">
+      Exchanges
+    </a>
+  </li>
+  <li>
+    <a routerLink="/app/notifications" routerLinkActive="active" class="flex items-center gap-2" (click)="closeDropdown(dropdownMenu)">
+      Notifications
+    </a>
+  </li>
+  <li>
+    <a routerLink="/app/my-profile" routerLinkActive="active" class="flex items-center gap-2" (click)="closeDropdown(dropdownMenu)">
+      My Profile
+    </a>
+  </li>
+  <div class="divider my-2"></div>
+  <li>
+    <button (click)="logout(); closeDropdown(dropdownMenu)" class="flex items-center gap-2 text-error">
+      Logout
+    </button>
+  </li>
+</ul>
+
+    </div>
+     <!-- Logo i enllaç a la pàgina d'inici -->
+    <ng-container *ngIf="isAuthenticated; else publicHome">
+      <a routerLink="/app" class="btn btn-ghost normal-case text-xl sm:text-2xl flex items-center gap-2">
+        <img src="logo.png" alt="SwapHub Logo" class="h-12 w-12 object-contain" />
+        SwapHub
+      </a>      
+    </ng-container>
+    <!-- Enllaç a la pàgina d'inici per a usuaris no autenticats -->
+    <ng-template #publicHome>
+      <a routerLink="/" class="btn btn-ghost normal-case text-xl sm:text-2xl flex items-center gap-2">
+        <img src="logo.png" alt="SwapHub Logo" class="h-12 w-12 object-contain" />
+        SwapHub
+      </a>      
+    </ng-template>
+  </div>
+  <!-- Columna de la dreta: Opcions per a usuaris autenticats -->
+  <div class="navbar-end">
+    <ng-container *ngIf="isAuthenticated; else loggedOut">
+      <div class="hidden lg:flex items-center gap-1">
+        <!-- Enllaç per tornar a la pàgina d'inici -->
+        <a routerLink="/app" routerLinkActive="bg-base-200" class="btn btn-ghost btn-sm rounded-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          <span class="hidden xl:inline ml-1">Home</span>
+        </a>
+        <!-- Enllaç per afegir un nou objecte -->
+        <a routerLink="/app/new-object" routerLinkActive="bg-base-200" class="btn btn-ghost btn-sm rounded-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          <span class="hidden xl:inline ml-1">Add Item</span>
+        </a>
+        <!-- Enllaç als intercanvis -->
+        <a routerLink="/app/my-exchanges" routerLinkActive="bg-base-200" class="btn btn-ghost btn-sm rounded-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+          <span class="hidden xl:inline ml-1">Exchanges</span>
+        </a>
+      </div>
+      <!-- Icona de notificacions -->
+      <a routerLink="/app/notifications" class="btn btn-ghost btn-circle">
+        <div class="indicator">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+        </div>
+      </a>        
+      <!-- Dropdown per mostrar el perfil de l'usuari -->
+      <div class="dropdown dropdown-end ml-2">
+        <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+          <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+            <img [src]="apiUrl + profileImage" alt="Profile" class="object-cover" />
+          </div>
+          <!-- Menú desplegable amb enllaços relacionats amb el perfil de l'usuari -->
+        </label>
+        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-lg bg-base-100 rounded-box w-52">
+          <li>
+            <a routerLink="/app/my-profile" class="justify-between">
+              Profile
+              <span class="badge badge-sm badge-primary">View</span>
+            </a>
+          </li>
+          <div class="divider my-1"></div>
+          <li><button (click)="logout()" class="text-error">Logout</button></li>
+        </ul>
+      </div>
+    </ng-container>
+    <!-- Plantilla per a usuaris no autenticats -->
+    <ng-template #loggedOut>
+      <div class="flex items-center gap-2">
+        <a routerLink="/login" class="btn btn-ghost btn-sm rounded-btn">Login</a>
+        <a routerLink="/register" class="btn btn-primary btn-sm rounded-btn">Register</a>
+      </div>
+    </ng-template>
+  </div>
+</nav>
+<div class="h-16 md:h-16"></div>

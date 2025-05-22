@@ -1,0 +1,12 @@
+    <!-- Missatge per informar l'usuari que la sessió ha expirat -->
+<dialog class="modal modal-open" *ngIf="visible$ | async">
+    <div class="modal-box">
+      <h3 class="font-bold text-lg text-red-600">Session Expired</h3>
+      <p class="py-4">Your session has expired. Please log in again.</p>
+      <div class="modal-action">
+      <!-- Botó que crida la funció 'logout()' quan l'usuari fa clic -->
+        <button (click)="logout()" class="btn btn-error text-white">Continue</button>
+      </div>
+    </div>
+  </dialog>
+  

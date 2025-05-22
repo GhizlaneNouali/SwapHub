@@ -1,0 +1,192 @@
+<div class="min-h-screen bg-gradient-to-br from-base-200 to-base-100 pt-20 pb-10 px-4 sm:px-6">
+  <div class="max-w-5xl mx-auto">
+     <div *ngIf="isLoading" class="flex flex-col justify-center items-center min-h-[60vh] gap-4">
+      <div class="loading loading-spinner loading-lg text-primary"></div>
+      <p class="text-base-content/70 animate-pulse">Loading profile...</p>
+    </div>
+
+     <div *ngIf="updateError" class="alert alert-error">
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12" />
+        </svg>
+        <span>{{ updateError }}</span>
+      </div>
+    </div>
+
+     <div *ngIf="successMessage" class="alert alert-success">
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <span>{{ successMessage }}</span>
+      </div>
+    </div>
+    <!-- Perfil de l'usuari -->
+     <div *ngIf="user" class="space-y-10">
+       <div class="card bg-base-100 shadow-xl overflow-hidden">
+         <div class="h-32 sm:h-62 bg-gradient-to-r from-primary/30 to-secondary/30 relative">
+          <!-- Imatge del perfil i botó per editar -->
+            <div class="relative mt-4 ml-4 sm:absolute sm:-bottom-16 sm:left-8">
+
+            <div class="avatar">
+              <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4 shadow-xl border-4 border-base-100">
+                <img [src]="apiUrl + user.profileImage" alt="Profile" class="object-cover"/>
+              </div>
+            </div>
+          </div>
+          <!-- Botó d'editar -->
+           <button *ngIf="!editMode" class="btn btn-sm btn-primary absolute top-4 right-4 gap-2" (click)="editMode = true">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+            Edit Profile
+          </button>
+        </div>
+        <!-- Contingut del perfil -->
+         <div class="card-body pt-20">
+          <!-- Informació de l'usuari (Nom i Cognoms) -->
+           <div *ngIf="!editMode" class="space-y-6">
+            <div>
+              <h2 class="text-3xl font-bold text-base-content">{{ user.name }} {{ user.surnames }}</h2>
+            </div>
+            <!-- Estadístiques (Articles i Intercanvis) -->
+             <div class="flex flex-col md:flex-row justify-center gap-6">
+              <div class="stat bg-base-200/50 rounded-xl">
+                <div class="stat-figure text-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                </div>
+                <div class="stat-title">Items</div>
+                <div class="stat-value text-primary">{{ items.length }}</div>
+                <div class="stat-desc">Available for exchange</div>
+              </div>
+
+              <div class="stat bg-base-200/50 rounded-xl">
+                <div class="stat-figure text-secondary">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                </div>
+                <div class="stat-title">Exchanges</div>
+                <div class="stat-value text-secondary">{{ acceptedExchangesCount }}</div>
+                <div class="stat-desc">Completed successfully</div>
+              </div>
+            </div>
+          </div>
+          <!-- Formulari per editar el perfil -->
+           <div *ngIf="editMode" class="space-y-6">
+            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Name</span>
+                  </label>
+                  <input formControlName="name" type="text" class="input input-bordered w-full focus:input-primary" />
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Surnames</span>
+                  </label>
+                  <input formControlName="surnames" type="text" class="input input-bordered w-full focus:input-primary" />
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Email</span>
+                  </label>
+                  <input type="email" [value]="user.email" class="input input-bordered w-full focus:input-primary" disabled />
+                  <label class="label">
+                    <span class="label-text-alt text-info">Email cannot be changed</span>
+                  </label>
+                </div>
+
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text font-medium">Profile Image</span>
+                  </label>
+                  <input type="file" class="file-input file-input-bordered w-full" (change)="onFileSelected($event)" />
+                  <label class="label">
+                    <span class="label-text-alt">Recommended size: 300x300px</span>
+                  </label>
+                </div>
+              </div>  
+              <div class="flex gap-2 justify-end mt-6">
+                <button class="btn btn-ghost" type="button" (click)="editMode = false">Cancel</button>
+                <button class="btn btn-primary" type="submit">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- Secció d'articles -->
+       <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h3 class="text-2xl font-bold text-base-content flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            My Items
+          </h3>
+
+          <div class="flex items-center gap-3">
+            <a routerLink="/app/new-object" class="btn btn-sm btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Add New Item
+            </a>
+
+            <div class="join bg-base-200 rounded-lg">
+              <button class="btn btn-sm join-item" [class.btn-active]="viewType === 'grid'" (click)="viewType = 'grid'">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+              </button>
+              <button class="btn btn-sm join-item" [class.btn-active]="viewType === 'list'" (click)="viewType = 'list'">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Si no hi ha articles -->
+         <div *ngIf="items.length > 0; else noItems">
+          <div [ngClass]="viewType === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6' : 'space-y-4'">
+            <app-card 
+              *ngFor="let item of items" 
+              [item]="item" 
+              [apiUrl]="apiUrl"
+              [viewType]="viewType"
+              (cardClick)="viewItemDetail($event)"
+              class="transition-all duration-300 hover:scale-[1.02]">
+            </app-card>      
+          </div>
+        </div>
+        <!-- Plantilla si no hi ha articles -->
+        <ng-template #noItems>
+          <div class="card bg-base-100 shadow-lg p-8 text-center">
+            <div class="flex flex-col items-center gap-4">
+              <div class="w-20 h-20 rounded-full bg-base-200 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold">No Items Yet</h3>
+              <p class="text-base-content/70 max-w-md">You haven't published any items for exchange yet. Start by adding your first item!</p>
+              <a routerLink="/app/new-object" class="btn btn-primary btn-sm mt-6">Add Item</a>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+ @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out forwards;
+  }
+  
+   .btn {
+    transition: all 0.2s ease;
+  }
+  
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+  
+  .btn:active {
+    transform: translateY(1px);
+  }
+  
+   a.text-primary {
+    transition: all 0.2s ease;
+  }
+  
+  a.text-primary:hover {
+    text-decoration-thickness: 2px;
+  }
+  
+   @media (max-width: 640px) {
+    .btn {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+  
+   .shadow-lg {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  }
+  

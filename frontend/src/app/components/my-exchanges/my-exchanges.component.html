@@ -1,0 +1,229 @@
+<div class="min-h-screen bg-gradient-to-br from-base-200 to-base-100 pt-20 pb-10 px-4 sm:px-6">
+  <div class="max-w-7xl mx-auto">
+     <div class="mb-8">
+      <h1 class="text-3xl font-bold text-base-content flex items-center gap-2">
+         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3M7 8l-4 4m0 0l4 4m-4-4h14" />
+        </svg>
+        Exchange Center
+      </h1>
+      <p class="text-base-content/70">Manage your exchange requests and offers</p>
+    </div>
+
+
+     <div *ngIf="isLoading" class="flex flex-col justify-center items-center min-h-[60vh] gap-4">
+      <div class="loading loading-spinner loading-lg text-primary"></div>
+      <p class="text-base-content/70 animate-pulse">Loading your exchanges...</p>
+    </div>
+
+     <div *ngIf="errorMessage && !isLoading" class="alert alert-error max-w-screen-md mx-auto shadow-lg">
+      <div class="flex justify-between w-full items-center">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+        <button class="btn btn-sm btn-outline" (click)="loadExchanges()">Retry</button>
+      </div>
+    </div>
+    <!-- Secció que mostra les sol·licituds d'intercanvi -->
+     <div *ngIf="!isLoading && !errorMessage">
+       <div class="tabs tabs-boxed bg-base-200/50 p-1 mb-6">
+        <a class="tab flex-1 sm:flex-none" [class.tab-active]="activeTab === 'received'" (click)="activeTab = 'received'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          Received
+          <!-- Mostra el nombre de sol·licituds rebudes -->
+          <div class="badge badge-sm ml-1">{{ receivedExchanges.length }}</div>
+        </a>
+        <a class="tab flex-1 sm:flex-none" [class.tab-active]="activeTab === 'sent'" (click)="activeTab = 'sent'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+          Sent
+          <!-- Mostra el nombre de sol·licituds enviades -->
+          <div class="badge badge-sm ml-1">{{ sentExchanges.length }}</div>
+        </a>
+      </div>
+      <!-- Secció de sol·licituds rebudes -->
+       <div *ngIf="activeTab === 'received'" class="space-y-6 animate-fadeIn">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold text-base-content">Received Requests</h2>
+          <button *ngIf="receivedExchanges.length > 0" class="btn btn-sm btn-ghost btn-circle" (click)="loadExchanges()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
+        <!-- Missatge quan no hi ha sol·licituds rebudes -->
+         <div *ngIf="receivedExchanges.length === 0" class="card bg-base-100 shadow-lg p-6 text-center">
+          <div class="flex flex-col items-center justify-center min-h-[200px] gap-4">
+            <div class="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-base-content">No Exchange Requests</h3>
+            <p class="text-base-content/70 max-w-xs">You haven't received any exchange requests yet. When someone wants to trade with you, it will appear here.</p>
+          </div>
+        </div>
+        <!-- Llista de sol·licituds rebudes -->
+         <div *ngFor="let exchange of receivedExchanges" class="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 border border-base-200 overflow-hidden">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">           
+                <div>
+                  <h3 class="font-bold text-base-content">{{ exchange.requester.name }}</h3>
+                </div>
+              </div>
+              <span class="badge" 
+                [ngClass]="{
+                  'badge-warning': exchange.status === 'pending',
+                  'badge-success': exchange.status === 'accepted',
+                  'badge-error': exchange.status === 'rejected'
+                }">
+                {{ exchange.status }}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div class="bg-base-200/50 rounded-lg p-3">
+                <div class="text-xs text-base-content/70 mb-1">They want:</div>
+                <a [routerLink]="['/app/item-detail/', exchange.requestedItem.id]" class="font-medium text-base-content hover:text-primary transition-colors">{{ exchange.requestedItem.title }}</a>
+              </div>
+              
+              <div class="bg-primary/10 rounded-lg p-3">
+                <div class="text-xs text-primary/70 mb-1">They offer:</div>
+                <a [routerLink]="['/app/item-detail/', exchange.offeredItem.id]" class="font-medium text-base-content hover:text-primary transition-colors">{{ exchange.offeredItem.title }}</a>
+              </div>
+            </div>
+
+            <div *ngIf="exchange.message" class="bg-base-200/30 rounded-lg p-3 mb-4 italic text-sm text-base-content/80">
+              "{{ exchange.message }}"
+            </div>
+
+            <div *ngIf="exchange.status === 'pending'" class="flex justify-end gap-2">
+              <button 
+                class="btn btn-sm btn-outline btn-error"
+                (click)="rejectExchange(exchange.id)"
+              >
+                Decline
+              </button>
+              <button 
+                class="btn btn-sm btn-primary"
+                (click)="acceptExchange(exchange.id)"
+              >
+                Accept
+              </button>
+            </div>
+
+            <div *ngIf="exchange.status === 'accepted'" class="alert alert-success text-sm shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Exchange accepted! Contact the requester to coordinate.</span>
+              
+              <!-- Aquí se muestra el correo electrónico del solicitante -->
+              <div class="mt-2 text-sm">
+                <p><strong>Requester's Email:</strong> {{ exchange.requester.email }}</p>
+              </div>
+            </div>
+            <!-- Missatge quan la sol·licitud ha estat rebutjada -->
+            <div *ngIf="exchange.status === 'rejected'" class="alert alert-error text-sm shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Exchange declined</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Secció de sol·licituds enviades -->
+       <div *ngIf="activeTab === 'sent'" class="space-y-6 animate-fadeIn">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold text-base-content">Sent Requests</h2>
+          <button *ngIf="sentExchanges.length > 0" class="btn btn-sm btn-ghost btn-circle" (click)="loadExchanges()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
+        <!-- Missatge quan no hi ha sol·licituds enviades -->
+         <div *ngIf="sentExchanges.length === 0" class="card bg-base-100 shadow-lg p-6 text-center">
+          <div class="flex flex-col items-center justify-center min-h-[200px] gap-4">
+            <div class="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-base-content">No Sent Requests</h3>
+            <p class="text-base-content/70 max-w-xs">You haven't sent any exchange requests yet. Find items you like and request an exchange!</p>
+            <button class="btn btn-primary btn-sm" routerLink="/app">Browse Items</button>
+          </div>
+        </div>
+        <!-- Llista de sol·licituds enviades -->
+         <div *ngFor="let exchange of sentExchanges" class="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 border border-base-200 overflow-hidden">
+          <div class="card-body p-5">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">             
+                <div>
+                  <h3 class="font-bold text-base-content">{{ exchange.owner.name }}</h3>
+                  
+                </div>
+              </div>
+              <span class="badge" 
+                [ngClass]="{
+                  'badge-warning': exchange.status === 'pending',
+                  'badge-success': exchange.status === 'accepted',
+                  'badge-error': exchange.status === 'rejected'
+                }">
+                {{ exchange.status }}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div class="bg-primary/10 rounded-lg p-3">
+                <div class="text-xs text-primary/70 mb-1">You requested:</div>
+                <a [routerLink]="['/app/item-detail/', exchange.requestedItem.id]" class="font-medium text-base-content hover:text-primary transition-colors">{{ exchange.requestedItem.title }}</a>
+              </div>
+              
+              <div class="bg-base-200/50 rounded-lg p-3">
+                <div class="text-xs text-base-content/70 mb-1">You offered:</div>
+                <a [routerLink]="['/app/item-detail/', exchange.offeredItem.id]" class="font-medium text-base-content hover:text-primary transition-colors">{{ exchange.offeredItem.title }}</a>
+              </div>
+            </div>
+
+            <div *ngIf="exchange.message" class="bg-base-200/30 rounded-lg p-3 mb-4 italic text-sm text-base-content/80">
+              "{{ exchange.message }}"
+            </div>
+
+            <div *ngIf="exchange.status === 'pending'" class="alert alert-warning text-sm shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>Awaiting response</span>
+            </div>
+
+            <div *ngIf="exchange.status === 'accepted'" class="alert alert-success text-sm shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Exchange accepted! Contact the owner to coordinate.</span>              
+              <div class="mt-2 text-sm">
+                <p><strong>Owner's Email:</strong> {{ exchange.owner.email }}</p>
+              </div>
+            </div>
+            <div *ngIf="exchange.status === 'rejected'" class="alert alert-error text-sm shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Exchange declined by the owner</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

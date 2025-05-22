@@ -1,0 +1,234 @@
+<div class="min-h-screen bg-gradient-to-br from-base-200 to-base-100 pt-20 pb-10 px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto">
+     <div *ngIf="isLoading" class="flex flex-col justify-center items-center min-h-[60vh] gap-4">
+      <div class="relative w-20 h-20">
+        <div class="loading loading-spinner loading-lg text-primary"></div>
+        <div class="absolute inset-0 flex items-center justify-center animate-pulse">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-base-content/70 animate-pulse text-lg font-medium">Loading your items...</p>
+    </div>
+
+     <div *ngIf="errorMessage && !userItems?.length && !isLoading" class="alert alert-error max-w-screen-md mx-auto shadow-lg">
+      <div class="flex justify-between w-full items-center">
+        <div class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+        <button class="btn btn-sm btn-outline" (click)="loadUserItems()">Retry</button>
+      </div>
+    </div>
+    <!-- Si no hi ha articles i no hi ha error, mostrem un missatge indicant que no hi ha articles -->
+     <div *ngIf="userItems?.length === 0 && !errorMessage && !isLoading" class="card bg-base-100 shadow-xl p-8 text-center max-w-screen-md mx-auto">
+      <div class="flex flex-col items-center justify-center min-h-[300px] gap-6">
+        <div class="w-24 h-24 rounded-full bg-base-200 flex items-center justify-center mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-base-content">No Items Available</h2>
+        <p class="text-base-content/70 max-w-md">To request an exchange, you must have at least one item posted. Create one and try again.</p>
+        <button class="btn btn-primary btn-lg gap-2 shadow-md hover:shadow-lg transition-all duration-300" (click)="redirectToCreateItem()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Create a New Item
+        </button>
+      </div>
+    </div>
+    <!-- Si hi ha articles disponibles, mostrem els articles de l'usuari per seleccionar-los per a l'intercanvi -->
+     <div *ngIf="userItems && userItems.length > 0 && !isLoading" class="space-y-8 animate-fadeIn">
+       <div class="text-center max-w-3xl mx-auto">
+        <div class="flex items-center justify-center gap-2 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+          <h1 class="text-3xl font-bold text-base-content">Create Exchange Request</h1>
+        </div>
+        <p class="text-base-content/70 mb-6">Select one of your items to offer in exchange for the requested item</p>
+        <!-- Barra d'estat per mostrar el progrés de selecció d'articles -->
+         <div class="w-full bg-base-300 rounded-full h-2.5 mb-6 max-w-md mx-auto overflow-hidden">
+          <div 
+            class="bg-primary h-2.5 rounded-full transition-all duration-500"
+            [style.width]="offeredItemId ? '100%' : '50%'"
+          ></div>
+        </div>
+        <!-- Passos de selecció -->
+         <div class="flex justify-center mb-8">
+          <div class="steps steps-vertical md:steps-horizontal">
+            <div class="step step-primary">Select Item</div>
+            <div class="step" [ngClass]="{'step-primary': offeredItemId}">Confirm Exchange</div>
+          </div>
+        </div>
+      </div>
+      <!-- Llista dels articles de l'usuari -->
+       <div class="card bg-base-100 shadow-xl rounded-2xl overflow-hidden border border-base-300">
+        <div class="card-body p-6 md:p-8">
+          <h2 class="text-xl font-bold text-base-content flex items-center gap-2 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            Your Items ({{ userItems.length }})
+          </h2>
+          <!-- Cercador d'articles -->
+           <div class="mb-6">
+            <div class="relative">
+              <input 
+                type="text" 
+                placeholder="Search your items..." 
+                class="input input-bordered w-full pr-10 focus:input-primary"
+                [(ngModel)]="searchTerm"
+              />
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <!-- Mostrar els articles en una graella -->
+           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div 
+              *ngFor="let item of filteredItems" 
+              class="cursor-pointer group"
+              (click)="selectItem(item.id)"
+            >
+              <div 
+                class="card bg-base-100 border shadow-md transition-all duration-300 group-hover:shadow-xl rounded-xl overflow-hidden h-full"
+                [ngClass]="{'border-primary shadow-xl ring-2 ring-primary': offeredItemId === item.id, 'group-hover:border-primary/50': offeredItemId !== item.id}">
+                <!-- Mostra imatge de l'article -->
+                 <figure class="relative h-48 bg-base-200 overflow-hidden">
+                  <img 
+                    *ngIf="item.images && item.images.length" 
+                    [src]="apiUrl + item.images[0].path" 
+                    class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" 
+                    [alt]="item.title"
+                  />
+                  <div *ngIf="!item.images || !item.images.length" class="w-full h-full flex items-center justify-center bg-base-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <!-- Categoria de l'article -->
+                   <div *ngIf="item.category" class="absolute top-2 right-2">
+                    <span class="badge badge-primary shadow-md">{{ item.category }}</span>
+                  </div>
+                  <!-- Indicador de selecció de l'article -->
+                   <div *ngIf="offeredItemId === item.id" class="absolute top-2 left-2">
+                    <div class="badge badge-success gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Selected
+                    </div>
+                  </div>
+                </figure>
+                <!-- Detalls de l'article -->
+                 <div class="card-body p-4">
+                  <h3 class="card-title text-base font-bold text-base-content line-clamp-1">{{ item.title }}</h3>
+                  <p class="text-sm text-base-content/70 line-clamp-2">{{ item.description || 'No description available' }}</p>
+                  
+                   <div class="card-actions justify-end mt-2">
+                    <button 
+                      class="btn btn-sm"
+                      [ngClass]="{'btn-primary': offeredItemId !== item.id, 'btn-success': offeredItemId === item.id}"
+                      (click)="selectItem(item.id); $event.stopPropagation()"
+                    >
+                      <span *ngIf="offeredItemId !== item.id">Select</span>
+                      <span *ngIf="offeredItemId === item.id">Selected</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+<!-- Card per escriure el missatge a l'usuari de l'article seleccionat -->
+       <div class="card bg-base-100 shadow-xl rounded-2xl overflow-hidden border border-base-300 max-w-3xl mx-auto">
+        <div class="card-body p-6 md:p-8">
+          <h2 class="text-xl font-bold text-base-content flex items-center gap-2 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+            Message to Owner
+          </h2>
+          
+          <div class="form-control w-full">
+            <textarea 
+              class="textarea textarea-bordered w-full h-32 resize-none focus:textarea-primary text-base" 
+              placeholder="Hello :), I'm interested in your item and would like to exchange it for this one..."
+              [(ngModel)]="optionalMessage">
+            </textarea>
+            <label class="label">
+              <span class="label-text-alt text-base-content/60">This message will be sent to the item owner</span>
+              <span class="label-text-alt text-base-content/60">{{ optionalMessage.length }}/500 characters</span>
+            </label>
+          </div>
+            <!-- Botons per cancel·lar o enviar la sol·licitud d'intercanvi -->
+           <div class="flex flex-col sm:flex-row gap-3 mt-4">
+            <button 
+              class="btn btn-outline flex-1"
+              (click)="goBack()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Cancel
+            </button>
+            
+            <button 
+              class="btn btn-primary flex-1 gap-2" 
+              [disabled]="!offeredItemId || isSubmitting"
+              [class.loading]="isSubmitting"
+              (click)="onCreateExchange()"
+            >
+              <svg *ngIf="!isSubmitting" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              <span *ngIf="!isSubmitting">Submit Exchange Request</span>
+              <span *ngIf="isSubmitting">Submitting...</span>
+            </button>
+          </div>
+          <div *ngIf="showSuccess" class="alert alert-success fixed top-4 right-4 w-auto max-w-sm shadow-lg z-50">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Exchange request sent successfully!</span>
+            </div>
+          </div>
+           <div *ngIf="errorMessage && userItems && userItems.length > 0" class="alert alert-error mt-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{{ errorMessage }}</span>
+          </div>
+        </div>
+      </div>
+<!-- Card explicativa sobre com funcionen els intercanvis -->
+      <div class="max-w-3xl mx-auto bg-base-200/50 rounded-xl p-4 border border-base-300">
+        <h3 class="text-lg font-medium text-base-content mb-2 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          How exchanges work
+        </h3>
+        <ul class="text-sm text-base-content/70 space-y-2 ml-6 list-disc">
+          <li>Select one of your items to offer in exchange</li>
+          <li>The owner will receive your exchange request</li>
+          <li>If they accept, you'll be able to coordinate the exchange</li>
+          <li>Both parties must confirm when the exchange is complete</li>
+          <li>You can cancel the exchange request at any time before it's accepted</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+

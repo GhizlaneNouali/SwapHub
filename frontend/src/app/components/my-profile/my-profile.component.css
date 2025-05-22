@@ -1,0 +1,88 @@
+ .card {
+    transition: all 0.3s ease;
+  }
+  
+  .btn {
+    transition: all 0.2s ease;
+  }
+  
+   app-card:hover {
+    z-index: 10;
+  }
+  
+   .avatar img {
+    transition: transform 0.3s ease;
+  }
+  
+  .avatar:hover img {
+    transform: scale(1.05);
+  }
+  
+   @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+   .loading-spinner {
+    position: relative;
+  }
+  
+  .loading-spinner::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: pulse 4s linear infinite;
+  }
+  
+   ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+  
+   .input:focus,
+  .select:focus,
+  .textarea:focus {
+    box-shadow: 0 0 0 2px rgba(var(--p), 0.2);
+  }
+  
+   @media (max-width: 640px) {
+    .card-body {
+      padding: 1.25rem;
+    }
+  
+    .avatar div {
+      width: 5rem;
+    }
+  
+    .h-32 {
+      height: 6rem;
+    }
+  }
+  
