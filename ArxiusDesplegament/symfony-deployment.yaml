@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: symfony-api
+  namespace: grup9
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: symfony-api
+  template:
+    metadata:
+      labels:
+        app: symfony-api
+    spec:
+      containers:
+        - name: symfony-api
+          image: ghizlane2198/symfony-api
+          ports:
+            - containerPort: 9000
+          env:
+            - name: DATABASE_URL
+              value: "mysql://user:1qazZAQ!@mysql-service:3306/project"
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "200m"
+            limits:
+              memory: "500Mi"
+              cpu: "400m"
+          volumeMounts:
+            - name: images-volume
+              mountPath: /var/www/html/public/uploads
+      volumes:
+        - name: images-volume
+          persistentVolumeClaim:
+            claimName: images-pvc

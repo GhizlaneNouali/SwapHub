@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: symfony-service
+  namespace: grup9
+spec:
+  selector:
+    app: symfony-api
+  ports:
+   - port: 9000
+     targetPort: 9000
+  type: ClusterIP
